@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Splendor Pizza — Ayeduase, Kumasi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,900;1,600&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crust: #FBF3E3;
+    --crust-deep: #F2E4C7;
+    --tomato: #C8392A;
+    --tomato-deep: #9E2A1E;
+    --basil: #3E5C3A;
+    --cheese: #E8A93C;
+    --ink: #2A1A12;
+    --ink-soft: #5C4A3C;
+    --line: rgba(42,26,18,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--crust);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:900;
+    line-height:1;
+  }
+  .mono{font-family:'Space Mono', monospace;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 32px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  .crust-edge{
+    height:16px; width:100%;
+    background:repeating-linear-gradient(90deg,
+      var(--tomato) 0 26px, var(--cheese) 26px 52px);
+  }
+
+  header{
+    position:sticky; top:0; z-index:50;
+    background:var(--crust);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-row{display:flex; align-items:center; justify-content:space-between; padding:16px 0;}
+  .logo{display:flex; align-items:center; gap:12px;}
+  .logo-mark{
+    width:40px; height:40px; border-radius:50%;
+    background:var(--cheese);
+    position:relative; flex-shrink:0;
+    box-shadow:inset 0 0 0 3px var(--tomato);
+  }
+  .logo-mark::before, .logo-mark::after{
+    content:''; position:absolute; width:5px; height:5px; border-radius:50%; background:var(--tomato-deep);
+  }
+  .logo-mark::before{top:11px; left:13px;}
+  .logo-mark::after{bottom:9px; right:10px;}
+  .logo-text{font-size:20px; font-family:'Fraunces'; font-weight:900;}
+  nav ul{list-style:none; display:flex; gap:30px;}
+  nav a{font-size:14px; font-weight:600; letter-spacing:0.02em; border-bottom:2px solid transparent; padding-bottom:3px; transition:border-color .2s;}
+  nav a:hover{border-color:var(--tomato);}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 22px;
+    background:var(--tomato);
+    color:var(--crust);
+    font-weight:700; font-size:14px;
+    border-radius:30px;
+    border:1px solid var(--tomato);
+    transition:transform .15s ease, background .2s ease;
+  }
+  .btn:hover{background:var(--tomato-deep); border-color:var(--tomato-deep); transform:translateY(-2px);}
+  .btn:focus-visible{outline:3px solid var(--cheese); outline-offset:2px;}
+  .btn-ghost{background:transparent; color:var(--ink); border:1px solid var(--ink);}
+  .btn-ghost:hover{background:var(--ink); color:var(--crust);}
+  .menu-toggle{display:none; background:none; border:none; font-size:26px; cursor:pointer;}
+  @media (max-width:760px){
+    nav{display:none;}
+    header .btn.desktop-only{display:none;}
+    .menu-toggle{display:block;}
+  }
+
+  .hero{padding:80px 0 90px; position:relative;}
+  .hero-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center;}
+  @media (max-width:860px){ .hero-grid{grid-template-columns:1fr;} }
+
+  .rating-pill{
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--crust-deep); border:1px solid var(--line);
+    padding:8px 16px; border-radius:30px;
+    font-size:14px; font-weight:600; margin-bottom:24px;
+  }
+  .rating-pill .stars{color:var(--cheese); font-size:15px; letter-spacing:1px;}
+  .rating-pill b{font-family:'Space Mono'; color:var(--tomato-deep);}
+
+  .hero h1{font-size:clamp(46px,7.5vw,80px); margin-bottom:20px; font-style:italic;}
+  .hero h1 .accent{color:var(--tomato); font-style:normal;}
+  .hero p.lede{font-size:18px; color:var(--ink-soft); max-width:48ch; margin-bottom:30px; line-height:1.6;}
+  .hero-ctas{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:34px;}
+
+  .meta-row{display:flex; gap:28px; flex-wrap:wrap;}
+  .meta-item{font-size:13px; color:var(--ink-soft);}
+  .meta-item b{display:block; font-family:'Fraunces'; font-size:16px; color:var(--ink); font-weight:900;}
+
+  /* ---- Hero pizza artwork ---- */
+  .hero-visual{
+    position:relative; aspect-ratio:4/5; border-radius:12px;
+    background:var(--crust-deep);
+    box-shadow:14px 14px 0 var(--crust-deep), 0 0 0 1px var(--line);
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    padding:6%;
+  }
+  .hero-visual svg{ width:100%; height:auto; }
+  .steam-wisp{
+    animation: sway 4s ease-in-out infinite;
+    transform-origin:center bottom;
+  }
+  .steam-wisp.w2{ animation-delay:.6s; }
+  .steam-wisp.w3{ animation-delay:1.2s; }
+  @keyframes sway{
+    0%,100%{ transform:translateX(0) scaleY(1); opacity:.55; }
+    50%{ transform:translateX(4px) scaleY(1.04); opacity:.85; }
+  }
+  @media (prefers-reduced-motion: reduce){ .steam-wisp{ animation:none; } }
+
+  section{padding:84px 0;}
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    margin-bottom:44px; gap:20px; flex-wrap:wrap;
+    border-bottom:1px solid var(--line); padding-bottom:22px;
+  }
+  .section-head h2{font-size:clamp(30px,5vw,48px); font-style:italic;}
+  .section-num{font-family:'Space Mono'; color:var(--tomato); font-size:14px;}
+
+  .menu-band{background:var(--ink); color:var(--crust);}
+  .menu-band .section-head{border-bottom:1px solid rgba(251,243,227,0.18);}
+  .menu-band .section-num{color:var(--cheese);}
+  .menu-note{font-size:14px; color:rgba(251,243,227,0.6); margin-bottom:36px; max-width:56ch;}
+  .menu-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+  @media (max-width:700px){ .menu-grid{grid-template-columns:1fr;} }
+  .menu-card{
+    background:rgba(251,243,227,0.05);
+    border:1px solid rgba(251,243,227,0.16);
+    border-radius:8px; padding:26px;
+  }
+  .menu-card .tag{
+    display:inline-block; font-family:'Space Mono'; font-size:11px; letter-spacing:0.06em;
+    background:var(--tomato); color:var(--crust); padding:4px 10px; border-radius:20px; margin-bottom:14px; text-transform:uppercase;
+  }
+  .menu-card h3{font-size:22px; font-style:italic; margin-bottom:10px;}
+  .menu-card p{font-size:14px; color:rgba(251,243,227,0.65); line-height:1.6; margin-bottom:14px;}
+  .menu-card .price{font-family:'Space Mono'; color:var(--cheese); font-size:18px;}
+
+  .reviews-band{}
+  .review-stat-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:56px; align-items:center;}
+  @media (max-width:860px){ .review-stat-grid{grid-template-columns:1fr;} }
+  .big-rating{display:flex; align-items:baseline; gap:18px; margin-bottom:14px;}
+  .big-rating .num{font-family:'Fraunces'; font-size:72px; font-weight:900;}
+  .big-rating .stars{color:var(--cheese); font-size:22px; letter-spacing:2px;}
+  .review-count{color:var(--ink-soft); font-size:15px; margin-bottom:26px;}
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:9px; font-size:13px;}
+  .bar-row .lbl{width:14px; color:var(--ink-soft); text-align:right;}
+  .bar-track{flex:1; height:8px; background:var(--crust-deep); border-radius:6px; overflow:hidden;}
+  .bar-fill{height:100%; background:var(--cheese);}
+  .review-card{
+    background:var(--crust-deep); border:1px solid var(--line); border-radius:10px; padding:28px;
+  }
+  .review-card .qmark{font-family:'Fraunces'; font-size:52px; color:var(--tomato); line-height:0.6; margin-bottom:10px; display:block;}
+  .review-card p{font-size:15px; color:var(--ink-soft); line-height:1.7; margin-bottom:14px;}
+  .review-card .src{font-size:13px; font-weight:600;}
+
+  .visit{background:var(--tomato); color:var(--crust);}
+  .visit .section-head{border-bottom-color:rgba(251,243,227,0.25);}
+  .visit .section-num{color:var(--cheese);}
+  .visit-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px;}
+  @media (max-width:860px){ .visit-grid{grid-template-columns:1fr;} }
+  .contact-list{display:grid; gap:16px;}
+  .contact-row{
+    display:flex; gap:16px; align-items:flex-start; padding:18px;
+    background:rgba(251,243,227,0.08);
+    border:1px solid rgba(251,243,227,0.2); border-radius:8px;
+  }
+  .contact-row .ic{
+    width:36px; height:36px; border-radius:50%; background:var(--cheese); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:16px; font-weight:700;
+  }
+  .contact-row .lbl{font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:rgba(251,243,227,0.65); margin-bottom:3px;}
+  .contact-row .val{font-weight:700; font-size:16px;}
+  .contact-row a.val:hover{color:var(--cheese);}
+  .hours-card{background:rgba(251,243,227,0.08); border:1px solid rgba(251,243,227,0.2); border-radius:8px; padding:28px;}
+  .hours-card h3{font-style:italic; font-size:22px; margin-bottom:18px;}
+  .hours-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed rgba(251,243,227,0.25); font-size:14px;}
+  .hours-row:last-child{border-bottom:none;}
+  .hours-row .day{color:rgba(251,243,227,0.7);}
+  .order-badges{display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;}
+  .order-badges a{
+    background:var(--crust); color:var(--tomato-deep); padding:10px 18px; border-radius:30px; font-weight:700; font-size:14px;
+  }
+  .order-badges a:hover{background:var(--cheese); color:var(--ink);}
+
+  footer{padding:36px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+  footer .fl{font-size:13px; color:var(--ink-soft);}
+  footer nav ul{gap:20px;}
+  footer nav a{font-size:13px; font-weight:500;}
+
+  .fade-up{opacity:0; transform:translateY(18px); animation:fadeUp .7s ease forwards;}
+  @keyframes fadeUp{ to{opacity:1; transform:translateY(0);} }
+  @media (prefers-reduced-motion: reduce){ .fade-up{animation:none; opacity:1; transform:none;} }
+</style>
+</head>
+<body>
+
+<div class="crust-edge"></div>
+
+<header>
+  <div class="wrap nav-row">
+    <div class="logo">
+      <div class="logo-mark" aria-hidden="true"></div>
+      <span class="logo-text">Splendor Pizza</span>
+    </div>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#visit">Visit</a></li>
+      </ul>
+    </nav>
+    <a class="btn desktop-only" href="https://food.bolt.eu/en/376-kumasi/p/129412-splendor-pizza/" target="_blank" rel="noopener">Order on Bolt Food</a>
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="fade-up">
+        <span class="rating-pill"><span class="stars">★★★★☆</span> <b>3.9</b> · 398 Google reviews</span>
+        <h1>Kumasi's slice of<br><span class="accent">Splendor.</span></h1>
+        <p class="lede">A neighbourhood American-style pizza joint at Ayeduase, right by KNUST campus, serving hand-topped pies since 2011.</p>
+        <div class="hero-ctas">
+          <a class="btn" href="https://food.bolt.eu/en/376-kumasi/p/129412-splendor-pizza/" target="_blank" rel="noopener">Order on Bolt Food</a>
+          <a class="btn btn-ghost" href="tel:0261127582">Call 026 112 7582</a>
+        </div>
+        <div class="meta-row">
+          <div class="meta-item"><b>GH₵50–100</b>per person</div>
+          <div class="meta-item"><b>Pizza · Takeout</b>category</div>
+          <div class="meta-item"><b>Open now</b>closes 11 PM</div>
+        </div>
+      </div>
+
+      <div class="hero-visual fade-up" style="animation-delay:.15s">
+        <svg viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of a hand-tossed pepperoni pizza with basil, fresh from the oven, representing Splendor Pizza">
+          <defs>
+            <radialGradient id="cheeseGrad" cx="40%" cy="35%" r="72%">
+              <stop offset="0%" stop-color="#F6CE79"/>
+              <stop offset="70%" stop-color="#E8A93C"/>
+              <stop offset="100%" stop-color="#D89526"/>
+            </radialGradient>
+            <radialGradient id="crustGrad" cx="46%" cy="42%" r="55%">
+              <stop offset="80%" stop-color="#F6E9CC"/>
+              <stop offset="100%" stop-color="#DCC697"/>
+            </radialGradient>
+            <linearGradient id="dripGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#F0BE5C"/>
+              <stop offset="100%" stop-color="#C9862B"/>
+            </linearGradient>
+            <radialGradient id="pepGrad" cx="35%" cy="30%" r="75%">
+              <stop offset="0%" stop-color="#C23B27"/>
+              <stop offset="65%" stop-color="#9E2A1E"/>
+              <stop offset="100%" stop-color="#7C1E15"/>
+            </radialGradient>
+            <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#2A1A12" flood-opacity="0.28"/>
+            </filter>
+          </defs>
+
+          <!-- steam -->
+          <g stroke="#FBF3E3" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7">
+            <path class="steam-wisp w1" d="M150 70 C 140 52, 162 40, 152 20" opacity="0.5"/>
+            <path class="steam-wisp w2" d="M200 62 C 190 42, 214 32, 202 8" opacity="0.65"/>
+            <path class="steam-wisp w3" d="M250 72 C 240 54, 262 42, 252 22" opacity="0.5"/>
+          </g>
+
+          <g filter="url(#softShadow)">
+            <!-- hand-tossed crust: base circle plus bubbled edge -->
+            <circle cx="200" cy="248" r="186" fill="url(#crustGrad)"/>
+
+            <!-- crust surface bubbles for artisanal texture -->
+            <g fill="#EAD9AC" opacity="0.6">
+              <circle cx="140" cy="108" r="7"/><circle cx="285" cy="118" r="5.5"/>
+              <circle cx="345" cy="210" r="6.5"/><circle cx="352" cy="300" r="5"/>
+              <circle cx="290" cy="378" r="6"/><circle cx="180" cy="408" r="5.5"/>
+              <circle cx="88" cy="360" r="6.5"/><circle cx="54" cy="270" r="5.5"/>
+              <circle cx="70" cy="170" r="5"/><circle cx="110" cy="120" r="4"/>
+            </g>
+            <!-- char speckles on crust rim -->
+            <g fill="#B5824A" opacity="0.55">
+              <circle cx="128" cy="95" r="2.6"/><circle cx="300" cy="105" r="2.2"/>
+              <circle cx="355" cy="195" r="2.6"/><circle cx="360" cy="315" r="2.4"/>
+              <circle cx="270" cy="392" r="2.6"/><circle cx="150" cy="410" r="2.2"/>
+              <circle cx="65" cy="330" r="2.6"/><circle cx="48" cy="230" r="2.2"/>
+              <circle cx="95" cy="130" r="2"/><circle cx="320" cy="345" r="2"/>
+            </g>
+
+            <!-- cheese drips over the crust edge -->
+            <g>
+              <path d="M75 380 Q70 402 78 416 Q88 404 84 384 Z" fill="url(#dripGrad)"/>
+              <path d="M310 355 Q318 378 310 394 Q300 380 302 360 Z" fill="url(#dripGrad)"/>
+              <path d="M205 415 Q210 436 200 448 Q192 434 196 416 Z" fill="url(#dripGrad)"/>
+            </g>
+
+            <!-- cheese base -->
+            <circle cx="200" cy="248" r="156" fill="url(#cheeseGrad)"/>
+
+            <!-- sauce peeking through cheese -->
+            <g fill="#C8392A" opacity="0.88">
+              <ellipse cx="150" cy="198" rx="20" ry="14" transform="rotate(-20 150 198)"/>
+              <ellipse cx="255" cy="223" rx="16" ry="11" transform="rotate(15 255 223)"/>
+              <ellipse cx="195" cy="318" rx="18" ry="13" transform="rotate(6 195 318)"/>
+              <ellipse cx="120" cy="288" rx="14" ry="10" transform="rotate(-10 120 288)"/>
+              <ellipse cx="270" cy="318" rx="13" ry="9" transform="rotate(-14 270 318)"/>
+              <ellipse cx="225" cy="150" rx="12" ry="8" transform="rotate(22 225 150)"/>
+            </g>
+
+            <!-- cheese melt highlight streaks -->
+            <g fill="#FBE3AE" opacity="0.5">
+              <ellipse cx="170" cy="168" rx="24" ry="10" transform="rotate(18 170 168)"/>
+              <ellipse cx="262" cy="278" rx="26" ry="11" transform="rotate(-8 262 278)"/>
+              <ellipse cx="150" cy="348" rx="22" ry="9" transform="rotate(10 150 348)"/>
+              <ellipse cx="255" cy="185" rx="16" ry="7" transform="rotate(-16 255 185)"/>
+            </g>
+
+            <!-- browned cheese char near rim -->
+            <g fill="#B9762A" opacity="0.45">
+              <ellipse cx="90" cy="150" rx="10" ry="6" transform="rotate(30 90 150)"/>
+              <ellipse cx="320" cy="200" rx="9" ry="6" transform="rotate(-20 320 200)"/>
+              <ellipse cx="290" cy="370" rx="10" ry="6" transform="rotate(12 290 370)"/>
+            </g>
+
+            <!-- pepperoni, slightly irregular + charred rims + grease shine -->
+            <g>
+              <g transform="translate(150 188)">
+                <circle r="24" fill="url(#pepGrad)"/>
+                <circle r="24" fill="none" stroke="#6B1811" stroke-width="1.5" opacity="0.7"/>
+                <path d="M-10 -10 a6 6 0 0 1 12 -2" stroke="#E07A5C" stroke-width="2.5" fill="none" opacity="0.55" stroke-linecap="round"/>
+                <circle cx="6" cy="8" r="3" fill="#6B1811" opacity="0.5"/>
+                <circle cx="-7" cy="4" r="2.2" fill="#6B1811" opacity="0.4"/>
+              </g>
+              <g transform="translate(246 198) rotate(8)">
+                <circle r="22" fill="url(#pepGrad)"/>
+                <circle r="22" fill="none" stroke="#6B1811" stroke-width="1.5" opacity="0.7"/>
+                <path d="M-9 -9 a5 5 0 0 1 11 -2" stroke="#E07A5C" stroke-width="2.2" fill="none" opacity="0.5" stroke-linecap="round"/>
+                <circle cx="5" cy="7" r="2.6" fill="#6B1811" opacity="0.45"/>
+              </g>
+              <g transform="translate(272 284) rotate(-10)">
+                <circle r="23" fill="url(#pepGrad)"/>
+                <circle r="23" fill="none" stroke="#6B1811" stroke-width="1.5" opacity="0.7"/>
+                <path d="M-10 -10 a6 6 0 0 1 12 -2" stroke="#E07A5C" stroke-width="2.4" fill="none" opacity="0.5" stroke-linecap="round"/>
+                <circle cx="6" cy="8" r="2.8" fill="#6B1811" opacity="0.45"/>
+              </g>
+              <g transform="translate(182 293) rotate(14)">
+                <circle r="22" fill="url(#pepGrad)"/>
+                <circle r="22" fill="none" stroke="#6B1811" stroke-width="1.5" opacity="0.7"/>
+                <path d="M-9 -9 a5 5 0 0 1 11 -2" stroke="#E07A5C" stroke-width="2.2" fill="none" opacity="0.5" stroke-linecap="round"/>
+                <circle cx="5" cy="7" r="2.6" fill="#6B1811" opacity="0.45"/>
+              </g>
+              <g transform="translate(150 348) rotate(-6)">
+                <circle r="21" fill="url(#pepGrad)"/>
+                <circle r="21" fill="none" stroke="#6B1811" stroke-width="1.5" opacity="0.7"/>
+                <path d="M-9 -9 a5 5 0 0 1 10 -2" stroke="#E07A5C" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+                <circle cx="5" cy="6" r="2.4" fill="#6B1811" opacity="0.45"/>
+              </g>
+              <g transform="translate(232 358) rotate(20)">
+                <circle r="18" fill="url(#pepGrad)"/>
+                <circle r="18" fill="none" stroke="#6B1811" stroke-width="1.5" opacity="0.7"/>
+                <path d="M-8 -8 a4.5 4.5 0 0 1 9 -1.5" stroke="#E07A5C" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+              </g>
+              <g transform="translate(200 235) rotate(-15)">
+                <circle r="17" fill="url(#pepGrad)"/>
+                <circle r="17" fill="none" stroke="#6B1811" stroke-width="1.5" opacity="0.7"/>
+              </g>
+            </g>
+
+            <!-- basil leaves with center vein -->
+            <g>
+              <g transform="translate(205 243) rotate(20)">
+                <path d="M0 0 Q16 -13 30 3 Q16 15 0 0 Z" fill="#3E5C3A"/>
+                <path d="M2 -1 Q14 0 27 2" stroke="#2C4229" stroke-width="1.4" fill="none" opacity="0.7"/>
+              </g>
+              <g transform="translate(118 253) rotate(-35)">
+                <path d="M0 0 Q15 -12 28 3 Q15 14 0 0 Z" fill="#4A6B44"/>
+                <path d="M2 -1 Q13 0 26 2" stroke="#2C4229" stroke-width="1.3" fill="none" opacity="0.7"/>
+              </g>
+              <g transform="translate(220 320) rotate(-50)">
+                <path d="M0 0 Q15 -12 28 3 Q15 14 0 0 Z" fill="#3E5C3A"/>
+                <path d="M2 -1 Q13 0 26 2" stroke="#2C4229" stroke-width="1.3" fill="none" opacity="0.7"/>
+              </g>
+              <g transform="translate(160 320) rotate(60)">
+                <path d="M0 0 Q13 -10 24 2 Q13 12 0 0 Z" fill="#4A6B44"/>
+              </g>
+              <g transform="translate(275 250) rotate(-10)">
+                <path d="M0 0 Q12 -9 22 2 Q12 11 0 0 Z" fill="#3E5C3A"/>
+              </g>
+            </g>
+
+            <!-- oregano flecks + a little cracked pepper -->
+            <g fill="#5B6B3E" opacity="0.75">
+              <circle cx="175" cy="210" r="1.6"/><circle cx="230" cy="205" r="1.4"/>
+              <circle cx="140" cy="260" r="1.6"/><circle cx="290" cy="255" r="1.4"/>
+              <circle cx="210" cy="290" r="1.6"/><circle cx="165" cy="340" r="1.4"/>
+              <circle cx="255" cy="330" r="1.6"/><circle cx="195" cy="200" r="1.3"/>
+            </g>
+            <g fill="#2A1A12" opacity="0.5">
+              <circle cx="188" cy="222" r="1.1"/><circle cx="248" cy="240" r="1"/>
+              <circle cx="160" cy="278" r="1.1"/><circle cx="278" cy="300" r="1"/>
+              <circle cx="215" cy="345" r="1.1"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="menu" class="menu-band">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Menu Highlights</h2>
+        <span class="section-num mono">01 — Best Sellers</span>
+      </div>
+      <p class="menu-note">A few of the pies regulars order most. Full menu and every topping combo available in-store, on Bolt Food, or by phone.</p>
+      <div class="menu-grid">
+        <div class="menu-card">
+          <span class="tag">Popular</span>
+          <h3>Beef Pizza</h3>
+          <p>A customer favourite — savoury minced beef piled high on a fresh-baked crust.</p>
+          <span class="price">See menu for price</span>
+        </div>
+        <div class="menu-card">
+          <span class="tag">Loaded</span>
+          <h3>All Meat Pizza &amp; Mushroom</h3>
+          <p>A hearty mix of meats and mushroom for the table that wants it all.</p>
+          <span class="price">See menu for price</span>
+        </div>
+        <div class="menu-card">
+          <span class="tag">Classic</span>
+          <h3>Margherita Pizza</h3>
+          <p>The simple, reliable classic — tomato, cheese, and a well-baked base.</p>
+          <span class="price">See menu for price</span>
+        </div>
+        <div class="menu-card">
+          <span class="tag">Fan Favourite</span>
+          <h3>All Season Pizza</h3>
+          <p>Green pepper, onion, minced beef, sausage, chicken, ham, mushroom and cheese.</p>
+          <span class="price">GH₵100.00</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reviews" class="reviews-band">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>What Kumasi Says</h2>
+        <span class="section-num mono">02 — Reviews</span>
+      </div>
+      <div class="review-stat-grid">
+        <div>
+          <div class="big-rating">
+            <span class="num">3.9</span>
+            <span class="stars">★★★★☆</span>
+          </div>
+          <p class="review-count">Based on 398 Google reviews</p>
+          <div class="bar-row"><span class="lbl">5</span><div class="bar-track"><div class="bar-fill" style="width:55%"></div></div></div>
+          <div class="bar-row"><span class="lbl">4</span><div class="bar-track"><div class="bar-fill" style="width:20%"></div></div></div>
+          <div class="bar-row"><span class="lbl">3</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div></div>
+          <div class="bar-row"><span class="lbl">2</span><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div></div>
+          <div class="bar-row"><span class="lbl">1</span><div class="bar-track"><div class="bar-fill" style="width:7%"></div></div></div>
+        </div>
+        <div class="review-card">
+          <span class="qmark">”</span>
+          <p>Read the full set of ratings and written reviews on Google, and leave your own after your next visit.</p>
+          <span class="src">— Google Review Summary</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="visit" class="visit">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Find &amp; Order</h2>
+        <span class="section-num mono">03 — Visit Us</span>
+      </div>
+      <div class="visit-grid">
+        <div class="contact-list">
+          <div class="contact-row">
+            <div class="ic">⚲</div>
+            <div>
+              <div class="lbl">Location</div>
+              <span class="val">Ayeduase, near KNUST campus, Kumasi</span>
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="ic">✆</div>
+            <div>
+              <div class="lbl">Phone</div>
+              <a class="val" href="tel:0261127582">026 112 7582</a>
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="ic">f</div>
+            <div>
+              <div class="lbl">Facebook</div>
+              <a class="val" href="https://www.facebook.com/p/Splendor-Pizza-100024060293339/" target="_blank" rel="noopener">Splendor Pizza · 680+ followers</a>
+            </div>
+          </div>
+          <div class="order-badges">
+            <a href="https://food.bolt.eu/en/376-kumasi/p/129412-splendor-pizza/" target="_blank" rel="noopener">Order on Bolt Food</a>
+          </div>
+        </div>
+        <div class="hours-card">
+          <h3>Hours</h3>
+          <div class="hours-row"><span class="day">Every day</span><span>Open until 11:00 PM</span></div>
+          <p style="margin-top:16px; font-size:13px; color:rgba(251,243,227,0.6); line-height:1.6;">Hours can shift on holidays — call ahead if you're making a special trip.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="crust-edge"></div>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; width:100%;">
+    <span class="fl">© 2026 Splendor Pizza, Ayeduase, Kumasi.</span>
+    <nav aria-label="Footer">
+      <ul style="list-style:none; display:flex; gap:20px;">
+        <li><a href="tel:0261127582">Call</a></li>
+        <li><a href="https://www.facebook.com/p/Splendor-Pizza-100024060293339/" target="_blank" rel="noopener">Facebook</a></li>
+        <li><a href="https://food.bolt.eu/en/376-kumasi/p/129412-splendor-pizza/" target="_blank" rel="noopener">Order</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
